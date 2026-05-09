@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/users)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/users/1)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{\"username\":\"테스트\",\"age\":25,\"email\":\"test@test.com\"}')",
+      "Bash(curl -s http://localhost:8080/api/users/count)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?username=홍길동')",
+      "Bash(curl -s -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{\"username\":\"testuser\",\"age\":25,\"email\":\"test@test.com\"}')",
+      "Bash(python3 -c \"import urllib.parse; print\\(urllib.parse.quote\\('홍길동'\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?username=__TRACKED_VAR__')",
+      "Bash(python3 -c \"import urllib.parse; print\\(urllib.parse.quote\\('hong@hansung.ac.kr'\\)\\)\")",
+      "Bash(curl -s 'http://localhost:8080/api/users/verify?email=__TRACKED_VAR__&username=__TRACKED_VAR__')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{\"username\":\"newuser\",\"age\":25,\"email\":\"newuser@test.com\"}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/users/1/exists)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -G http://localhost:8080/api/users --data-urlencode username=홍길동)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -G http://localhost:8080/api/users --data-urlencode keyword=길)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?minAge=25&maxAge=35')",
+      "Bash(curl -s -G http://localhost:8080/api/users --data-urlencode username=홍길동)",
+      "Bash(curl -s -G http://localhost:8080/api/users/search/native --data-urlencode keyword=길동)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?username=%ED%99%8D%EA%B8%B8%EB%8F%99')",
+      "Bash(curl -s 'http://localhost:8080/api/users?username=%ED%99%8D%EA%B8%B8%EB%8F%99')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{\"username\":\"testuser\",\"age\":25,\"email\":\"test@test.com\"}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?keyword=%EA%B8%B8')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?username=%ED%99%8D%EA%B8%B8%EB%8F%99&minAge=30')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users?olderThan=30')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' 'http://localhost:8080/api/users/verify?email=hong%40hansung.ac.kr&username=%ED%99%8D%EA%B8%B8%EB%8F%99')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{\"username\":\"testuser2\",\"age\":26,\"email\":\"test2@test.com\"}')",
+      "Bash(curl -s 'http://localhost:8080/api/boards?page=0&size=5&meta=true')",
+      "Bash(curl -s http://localhost:8080/api/boards/count)",
+      "Bash(curl -s 'http://localhost:8080/api/boards/query?keyword=__TRACKED_VAR__&type=native')",
+      "Bash(docker compose *)",
+      "Bash(grep -q \"Started HelloSpringDataJpaApplication\" app.log)",
+      "Bash(grep -q \"BUILD FAILURE\\\\|APPLICATION FAILED\" app.log)"
+    ]
+  }
+}

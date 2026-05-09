@@ -1,0 +1,467 @@
+{
+  "info": {
+    "name": "Hello Spring Data JPA",
+    "_postman_id": "hello-spring-data-jpa-collection",
+    "description": "Spring Data JPA 실습 프로젝트 - 기본 CRUD, 페이징/정렬, Query Method, @Query",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "기본 CRUD",
+          "item": [
+            {
+              "name": "[기본CRUD] 회원 단건 등록",
+              "description": "JpaRepository.save() — 단건 등록. 이름, 나이, 이메일을 JSON으로 전송한다.",
+              "request": {
+                "method": "POST",
+                "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"신입회원\",\n  \"age\": 20,\n  \"email\": \"new@test.com\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 회원 다건 일괄 등록",
+              "description": "JpaRepository.saveAll() — 여러 회원을 한 번에 등록한다.",
+              "request": {
+                "method": "POST",
+                "url": { "raw": "{{baseUrl}}/api/users/batch", "host": ["{{baseUrl}}"], "path": ["api", "users", "batch"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\"username\": \"배치회원1\", \"age\": 21, \"email\": \"batch1@test.com\"},\n  {\"username\": \"배치회원2\", \"age\": 22, \"email\": \"batch2@test.com\"}\n]"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 전체 회원 목록 조회",
+              "description": "JpaRepository.findAll() — 전체 회원을 조회한다. DataInitializer 실행 후 10건이 조회되어야 한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 회원 단건 조회 (id=1)",
+              "description": "JpaRepository.findById() — id로 특정 회원을 조회한다. 없으면 404 반환.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 회원 수정 (id=1)",
+              "description": "JpaRepository.save() — 기존 회원 정보를 수정한다 (id가 있으면 UPDATE).",
+              "request": {
+                "method": "PUT",
+                "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"홍길동수정\",\n  \"age\": 30,\n  \"email\": \"hong_updated@hansung.ac.kr\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 회원 삭제 (id=1)",
+              "description": "JpaRepository.deleteById() — id로 회원을 삭제한다.",
+              "request": {
+                "method": "DELETE",
+                "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 전체 회원 수 조회",
+              "description": "JpaRepository.count() — 전체 회원 수를 숫자로 반환한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/users/count", "host": ["{{baseUrl}}"], "path": ["api", "users", "count"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 회원 존재 여부 확인 (id=1)",
+              "description": "JpaRepository.existsById() — 특정 id의 회원 존재 여부를 true/false로 반환한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/users/1/exists", "host": ["{{baseUrl}}"], "path": ["api", "users", "1", "exists"] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Query Method",
+          "item": [
+            {
+              "name": "[QueryMethod] 이름으로 조회 (홍길동)",
+              "description": "findByUsername(String) — 이름이 정확히 일치하는 회원을 조회한다. 동명이인 2건이 반환되어야 한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?username=홍길동",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users"],
+                  "query": [{ "key": "username", "value": "홍길동" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 이름 + 나이 초과 조회 (홍길동, 30세 초과)",
+              "description": "findByUsernameAndAgeGreaterThan(String, int) — 이름이 일치하고 나이가 지정값보다 큰 회원을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?username=홍길동&minAge=30",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users"],
+                  "query": [{ "key": "username", "value": "홍길동" }, { "key": "minAge", "value": "30" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 이름 키워드 검색 ('길' 포함)",
+              "description": "findByUsernameContaining(String) — LIKE '%keyword%' 쿼리로 이름에 키워드가 포함된 회원을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?keyword=길",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users"],
+                  "query": [{ "key": "keyword", "value": "길" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 나이 범위 조회 (25~35세)",
+              "description": "findByAgeBetween(int, int) — BETWEEN 쿼리로 나이 범위에 해당하는 회원을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?minAge=25&maxAge=35",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users"],
+                  "query": [{ "key": "minAge", "value": "25" }, { "key": "maxAge", "value": "35" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 이메일로 단건 조회",
+              "description": "findByEmail(String) — Optional<User> 반환. 존재하면 200, 없으면 404.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/email/hong@hansung.ac.kr",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users", "email", "hong@hansung.ac.kr"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "@Query",
+          "item": [
+            {
+              "name": "[@Query] 나이 이상 회원 조회 (30세 이상, Named Param)",
+              "description": "@Query + @Param(이름 기반 파라미터) — JPQL에서 :minAge로 파라미터를 바인딩하는 권장 방식.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?olderThan=30",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users"],
+                  "query": [{ "key": "olderThan", "value": "30" }]
+                }
+              }
+            },
+            {
+              "name": "[@Query] 이메일+이름 인증 조회 (Positional Param)",
+              "description": "@Query + 위치 기반 파라미터(?1, ?2) — email과 username을 동시에 검증하는 JPQL 쿼리.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/verify?email=hong@hansung.ac.kr&username=홍길동",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users", "verify"],
+                  "query": [
+                    { "key": "email", "value": "hong@hansung.ac.kr" },
+                    { "key": "username", "value": "홍길동" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[@Query] Native SQL 이름 키워드 검색",
+              "description": "@Query(nativeQuery=true) — JPQL 대신 실제 SQL로 LIKE 검색. 데이터베이스 방언에 종속된다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/search/native?keyword=길동",
+                  "host": ["{{baseUrl}}"], "path": ["api", "users", "search", "native"],
+                  "query": [{ "key": "keyword", "value": "길동" }]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Boards",
+      "item": [
+        {
+          "name": "기본 CRUD",
+          "item": [
+            {
+              "name": "[기본CRUD] 게시글 단건 등록",
+              "description": "JpaRepository.save() — 게시글을 등록한다. regDate는 @CreationTimestamp로 자동 생성된다.",
+              "request": {
+                "method": "POST",
+                "url": { "raw": "{{baseUrl}}/api/boards", "host": ["{{baseUrl}}"], "path": ["api", "boards"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"테스트 게시글 제목\",\n  \"content\": \"테스트 게시글 내용입니다.\",\n  \"writer\": \"테스터\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 게시글 다건 일괄 등록",
+              "description": "JpaRepository.saveAll() — 여러 게시글을 한 번에 등록한다.",
+              "request": {
+                "method": "POST",
+                "url": { "raw": "{{baseUrl}}/api/boards/batch", "host": ["{{baseUrl}}"], "path": ["api", "boards", "batch"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\"title\": \"배치 게시글1\", \"content\": \"내용1\", \"writer\": \"홍길동\"},\n  {\"title\": \"배치 게시글2\", \"content\": \"내용2\", \"writer\": \"김철수\"}\n]"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 전체 게시글 목록 조회 (seq DESC)",
+              "description": "JpaRepository.findAll(Sort) — seq 내림차순으로 전체 게시글을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/boards", "host": ["{{baseUrl}}"], "path": ["api", "boards"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 게시글 단건 조회 (seq=1)",
+              "description": "JpaRepository.findById() — seq로 특정 게시글을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/boards/1", "host": ["{{baseUrl}}"], "path": ["api", "boards", "1"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 게시글 수정 (seq=1)",
+              "description": "JpaRepository.save() — 기존 게시글을 수정한다.",
+              "request": {
+                "method": "PUT",
+                "url": { "raw": "{{baseUrl}}/api/boards/1", "host": ["{{baseUrl}}"], "path": ["api", "boards", "1"] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"수정된 게시글 제목\",\n  \"content\": \"수정된 내용입니다.\",\n  \"writer\": \"홍길동\"\n}"
+                }
+              }
+            },
+            {
+              "name": "[기본CRUD] 게시글 삭제 (seq=1)",
+              "description": "JpaRepository.deleteById() — seq로 게시글을 삭제한다.",
+              "request": {
+                "method": "DELETE",
+                "url": { "raw": "{{baseUrl}}/api/boards/1", "host": ["{{baseUrl}}"], "path": ["api", "boards", "1"] }
+              }
+            },
+            {
+              "name": "[기본CRUD] 전체 게시글 수 조회",
+              "description": "JpaRepository.count() — 전체 게시글 수를 숫자로 반환한다. DataInitializer 실행 후 20이 반환되어야 한다.",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{baseUrl}}/api/boards/count", "host": ["{{baseUrl}}"], "path": ["api", "boards", "count"] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "페이징 & 정렬",
+          "item": [
+            {
+              "name": "[페이징] 게시글 페이징 조회 (1페이지, 5건)",
+              "description": "JpaRepository.findAll(Pageable) + List 반환 — 페이지 번호와 크기를 지정해 일부만 조회한다. 메타정보 없음.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?page=0&size=5",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [{ "key": "page", "value": "0" }, { "key": "size", "value": "5" }]
+                }
+              }
+            },
+            {
+              "name": "[페이징] 게시글 페이징 + 메타정보 (Page<T> 반환)",
+              "description": "JpaRepository.findAll(Pageable) + Page<T> 반환 — totalElements, totalPages 등 페이지 메타정보를 포함해 반환한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?page=0&size=5&meta=true",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [
+                    { "key": "page", "value": "0" },
+                    { "key": "size", "value": "5" },
+                    { "key": "meta", "value": "true" }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Query Method",
+          "item": [
+            {
+              "name": "[QueryMethod] 제목 키워드 검색 ('한성대' 포함)",
+              "description": "findByTitleContaining(String) — 제목에 키워드가 포함된 게시글을 List로 반환한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?keyword=한성대",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [{ "key": "keyword", "value": "한성대" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 제목+내용 OR 키워드 검색",
+              "description": "findByTitleContainingOrContentContaining(String, String) — 제목 또는 내용에 키워드가 포함된 게시글을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?keyword=한성대&target=all",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [{ "key": "keyword", "value": "한성대" }, { "key": "target", "value": "all" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 제목 검색 + 페이징 (List 반환)",
+              "description": "findByTitleContaining(String, Pageable) — 검색 조건과 페이징을 동시에 적용. List 반환(메타정보 없음).",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?keyword=한성대&page=0&size=5",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [
+                    { "key": "keyword", "value": "한성대" },
+                    { "key": "page", "value": "0" },
+                    { "key": "size", "value": "5" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 제목 검색 + 페이징 (Page<T> 메타정보 포함)",
+              "description": "findPageByTitleContaining(String, Pageable) — 검색 결과를 Page<T>로 반환해 totalElements 등 메타정보를 포함한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?keyword=한성대&page=0&size=5&meta=true",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [
+                    { "key": "keyword", "value": "한성대" },
+                    { "key": "page", "value": "0" },
+                    { "key": "size", "value": "5" },
+                    { "key": "meta", "value": "true" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] 작성자로 조회 (홍길동)",
+              "description": "findByWriter(String) — 특정 작성자가 작성한 게시글을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?writer=홍길동",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [{ "key": "writer", "value": "홍길동" }]
+                }
+              }
+            },
+            {
+              "name": "[QueryMethod] seq 범위 조회 (1~10번)",
+              "description": "findBySeqBetween(Long, Long) — BETWEEN 조건으로 seq 범위에 해당하는 게시글을 조회한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards?seqFrom=1&seqTo=10",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards"],
+                  "query": [{ "key": "seqFrom", "value": "1" }, { "key": "seqTo", "value": "10" }]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "@Query",
+          "item": [
+            {
+              "name": "[@Query] 위치 기반 파라미터 검색 (?1)",
+              "description": "@Query + 위치 기반 파라미터(?1) — JPQL에서 파라미터를 순서 번호로 바인딩하는 방식. 가독성이 낮아 Named Param을 권장한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards/query?keyword=한성대&type=positional",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards", "query"],
+                  "query": [{ "key": "keyword", "value": "한성대" }, { "key": "type", "value": "positional" }]
+                }
+              }
+            },
+            {
+              "name": "[@Query] 이름 기반 파라미터 검색 (@Param)",
+              "description": "@Query + @Param(이름 기반 파라미터) — JPQL에서 :keyword로 파라미터를 바인딩하는 권장 방식.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards/query?keyword=한성대&type=named",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards", "query"],
+                  "query": [{ "key": "keyword", "value": "한성대" }, { "key": "type", "value": "named" }]
+                }
+              }
+            },
+            {
+              "name": "[@Query] Native SQL 검색",
+              "description": "@Query(nativeQuery=true) — JPQL 대신 실제 SQL로 실행. 특정 컬럼(seq, title, writer)만 반환한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards/query?keyword=한성대&type=native",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards", "query"],
+                  "query": [{ "key": "keyword", "value": "한성대" }, { "key": "type", "value": "native" }]
+                }
+              }
+            },
+            {
+              "name": "[@Query] 복합 조건 검색 (제목 + 작성자)",
+              "description": "@Query + 복합 조건 — 제목 키워드와 작성자를 동시에 조건으로 지정해 검색한다.",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/boards/query?keyword=한성대&writer=홍길동",
+                  "host": ["{{baseUrl}}"], "path": ["api", "boards", "query"],
+                  "query": [{ "key": "keyword", "value": "한성대" }, { "key": "writer", "value": "홍길동" }]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
