@@ -31,7 +31,12 @@
       "Bash(curl -s 'http://localhost:8080/api/boards/query?keyword=__TRACKED_VAR__&type=native')",
       "Bash(docker compose *)",
       "Bash(grep -q \"Started HelloSpringDataJpaApplication\" app.log)",
-      "Bash(grep -q \"BUILD FAILURE\\\\|APPLICATION FAILED\" app.log)"
+      "Bash(grep -q \"BUILD FAILURE\\\\|APPLICATION FAILED\" app.log)",
+      "PowerShell(docker compose up *)",
+      "PowerShell(./mvnw clean package -q 2>&1 | Select-Object -Last 20)",
+      "PowerShell(Start-Process -FilePath \"mvn\" -ArgumentList \"spring-boot:run\" -RedirectStandardOutput \"$env:TEMP\\\\springboot.log\" -RedirectStandardError \"$env:TEMP\\\\springboot-err.log\" -NoNewWindow -PassThru | Select-Object -ExpandProperty Id)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Get-Content *)"
     ]
   }
 }

@@ -26,10 +26,6 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    public List<Board> saveAll(List<Board> boards) {
-        return boardRepository.saveAll(boards);
-    }
-
     @Transactional(readOnly = true)
     public List<Board> findAll() {
         return boardRepository.findAll(Sort.by(Sort.Direction.DESC, "seq"));
@@ -53,18 +49,7 @@ public class BoardService {
         boardRepository.deleteById(seq);
     }
 
-    @Transactional(readOnly = true)
-    public long count() {
-        return boardRepository.count();
-    }
-
     // ── 페이징 & 정렬 ──────────────────────────────────────────────────────────
-
-    @Transactional(readOnly = true)
-    public List<Board> findByPage(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.Direction.DESC, "seq");
-        return boardRepository.findAll(pageable).getContent();
-    }
 
     @Transactional(readOnly = true)
     public PageResponseDto<Board> findWithPageInfo(int page, int size) {
@@ -73,22 +58,11 @@ public class BoardService {
         return PageResponseDto.of(boardPage);
     }
 
-    // ── Query Method ───────────────────────────────────────────────────────────
+    // ── [Query Method] ────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<Board> findByTitleContaining(String keyword) {
         return boardRepository.findByTitleContaining(keyword);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Board> findByTitleContainingOrContentContaining(String keyword) {
-        return boardRepository.findByTitleContainingOrContentContaining(keyword, keyword);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Board> findByTitleWithPage(String keyword, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.Direction.DESC, "seq");
-        return boardRepository.findByTitleContaining(keyword, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -103,12 +77,7 @@ public class BoardService {
         return boardRepository.findByWriter(writer);
     }
 
-    @Transactional(readOnly = true)
-    public List<Board> findBySeqBetween(Long start, Long end) {
-        return boardRepository.findBySeqBetween(start, end);
-    }
-
-    // ── @Query ─────────────────────────────────────────────────────────────────
+    // ── [@Query] ──────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<Board> searchByTitlePositional(String keyword) {
@@ -121,12 +90,12 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public List<Object[]> searchNativeByTitle(String keyword) {
-        return boardRepository.searchNativeByTitle(keyword);
+    public List<Board> searchByTitleAndWriter(String keyword, String writer) {
+        return boardRepository.searchByTitleAndWriter(keyword, writer);
     }
 
     @Transactional(readOnly = true)
-    public List<Board> searchByTitleAndWriter(String keyword, String writer) {
-        return boardRepository.searchByTitleAndWriter(keyword, writer);
+    public List<Object[]> searchNativeByTitle(String keyword) {
+        return boardRepository.searchNativeByTitle(keyword);
     }
 }

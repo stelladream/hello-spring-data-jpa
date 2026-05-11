@@ -23,10 +23,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> saveAll(List<User> users) {
-        return userRepository.saveAll(users);
-    }
-
     @Transactional(readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
@@ -50,26 +46,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
-    public long count() {
-        return userRepository.count();
-    }
-
-    @Transactional(readOnly = true)
-    public boolean existsById(Long id) {
-        return userRepository.existsById(id);
-    }
-
-    // ── Query Method ───────────────────────────────────────────────────────────
+    // ── [Query Method] ────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
-
-    @Transactional(readOnly = true)
-    public List<User> findByUsernameAndAgeGreaterThan(String username, int age) {
-        return userRepository.findByUsernameAndAgeGreaterThan(username, age);
     }
 
     @Transactional(readOnly = true)
@@ -78,16 +59,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findByAgeBetween(int min, int max) {
-        return userRepository.findByAgeBetween(min, max);
-    }
-
-    @Transactional(readOnly = true)
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // ── @Query ─────────────────────────────────────────────────────────────────
+    // ── [@Query] ──────────────────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<User> findUsersOlderThan(int minAge) {
@@ -95,12 +71,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> verifyByEmailAndUsername(String email, String username) {
-        return userRepository.findByEmailAndUsernameQuery(email, username);
-    }
-
-    @Transactional(readOnly = true)
-    public List<User> searchByUsernameNative(String keyword) {
-        return userRepository.searchByUsernameNative(keyword);
+    public List<User> searchUsernameNative(String keyword) {
+        return userRepository.searchUsernameNative(keyword);
     }
 }
